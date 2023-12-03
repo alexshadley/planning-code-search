@@ -7,9 +7,28 @@ from fastapi.staticfiles import StaticFiles
 import os
 import dotenv
 
+import openai
+from langchain.embeddings import OpenAIEmbeddings
+from langchain.vectorstores import Chroma
+from openai import OpenAI
+
+from backend.load import init_db_from_documents
+from backend.query import query_documents
+
 dotenv.load_dotenv(dotenv.find_dotenv())
 
 app = FastAPI()
+
+embeddings_model = OpenAIEmbeddings(api_key=os.getenv("OPENAI_API_KEY"))
+
+documents = [
+    '../san_francisco-ca-1.txt'
+]
+
+db = init_db_from_documents(documents, embeddings_model)
+
+client = OpenAI()
+
 
 FRONTEND_PORT = os.getenv("PORT", str(3000))
 
@@ -27,10 +46,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"]
 )
-
-@app.get("/")
-async def index():
-    return RedirectResponse(url="app/index.html") # replace with path to index.html
 
 # app.mount("/app", StaticFiles(directory="build"), name="root")
 
