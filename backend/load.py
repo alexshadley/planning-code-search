@@ -32,10 +32,12 @@ def chunk_legal_document(text: str):
     # Structure of planning code
     little_letters = ['(' + l + ')' for l in string.ascii_lowercase]
     numbered_sections = ['(' + str(d) + ')' for d in range(100)]
+    big_letters = ['(' + l + ')' for l in string.ascii_uppercase]
 
     splitter = RecursiveCharacterTextSplitter(
-        ['SEC'] + little_letters + numbered_sections + ['\n\n', '\n', ' '],
-        chunk_overlap=100,
+        ['SEC'] + little_letters + numbered_sections + big_letters + ['\n\n', '\n', ' '],
+        chunk_size=500,
+        chunk_overlap=50,
         length_function=len,
         add_start_index=False
     )
@@ -90,7 +92,7 @@ def chunk_nonplanning_document(text: str):
         add_start_index=False
     )
 
-    chunks = splitter.create_documents([text])
+    chunks = splitter.create_documents(text)
     return chunks
 
 
@@ -109,7 +111,7 @@ def load_document(filepath: str):
         planning_code = f.read()
 
     if filepath.endswith('html'):
-        planning_code = preprocess_html(filepath)
+        planning_code = preprocess_html(planning_code)
 
     if ('sb' in filepath and 'txt' in filepath) or 'san_francisco-ca' in filepath:
         chunks = chunk_legal_document(planning_code)
