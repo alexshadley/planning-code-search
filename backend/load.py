@@ -70,7 +70,7 @@ def chunk_generic_document(text: str):
 
 
 def chunk_nonplanning_document(text: str):
-    soup = BeautifulSoup(html_content, "html.parser")
+    soup = BeautifulSoup(text, "html.parser")
 
     # Remove all CSS style attributes
     for tag in soup.recursiveChildGenerator():
@@ -100,7 +100,7 @@ def chunk_nonplanning_document(text: str):
         add_start_index=False,
     )
 
-    chunks = splitter.create_documents(text)
+    chunks = splitter.create_documents([str(soup)])
     return chunks
 
 
