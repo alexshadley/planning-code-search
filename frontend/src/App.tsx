@@ -1,14 +1,16 @@
 import React, { useRef, useState } from "react";
 import "./App.css";
 import check from "./check-circle-svgrepo-com.svg";
+import { CircleLoader, PropagateLoader } from "react-spinners";
 
-function App() {
+const App = () => {
   const [file, setFile] = useState<File | null>(null);
   const [appText, setAppText] = useState<string | null>(null);
 
   const [query, setQuery] = useState<string>("");
 
   const [response, setResponse] = useState<string | null>(null);
+  const [responseLoading, setResponseLoading] = useState<boolean>(false);
 
   const onUpload = (f: File | null) => {
     setFile(f);
@@ -73,10 +75,11 @@ function App() {
           </div>
         )}
         {response && <div>{response}</div>}
+        {responseLoading && <Spinner />}
       </div>
     </div>
   );
-}
+};
 
 const UploadBox = ({
   onUploadFile,
@@ -116,6 +119,17 @@ const UploadBox = ({
           setFileName(e.currentTarget.files?.[0].name ?? null);
         }}
       />
+    </div>
+  );
+};
+
+const Spinner = ({ text }: { text?: string }) => {
+  return (
+    <div
+      style={{ display: "flex", justifyContent: "center", paddingTop: "50px" }}
+    >
+      <PropagateLoader color="#069108" size={15} />
+      {text && <div>{text}</div>}
     </div>
   );
 };
