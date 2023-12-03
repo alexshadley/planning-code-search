@@ -1,4 +1,5 @@
 
+from typing import Optional
 import openai
 from pydantic import BaseModel, Field
 
@@ -15,18 +16,22 @@ class ApplicationResponse(BaseModel):
     relevant_documents: list[RelevantItem] = Field(description="A list of relevant items (section, article, ordanance, or piece of legislation)")
 
 
-def query_documents(model, db, query):
 
-    documents = db.similarity_search(query)
+
+def find_relavant_docs(model, db, raw_application: str):
+    documents = db.similarity_search(raw_application)
 
     full_prompt = f''',
-        {query},
+        {raw_application}\n\n
         {(chr(10) + chr(10)).join([d.page_content for d in documents])},
     '''
+    
+    template_str = 'Given an SF Planning application for a new development, give a summary of relavant sections, articles, ordanances, or pieces of legislation. \n{format_instructions}\n{query}\n'
+
 
     parser = PydanticOutputParser(pydantic_object=ApplicationResponse)
     prompt = PromptTemplate(
-        template= "Given an SF Planning application for a new development, give a summary of relavant sections, articles, ordanances, or pieces of legislation. \n{format_instructions}\n{query}\n",
+        template=template_str,
         input_variables=["query"],
         partial_variables={"format_instructions": parser.get_format_instructions()},
     )
@@ -35,8 +40,25 @@ def query_documents(model, db, query):
     output = prompt_and_model.invoke({"query": full_prompt})
     response = parser.invoke(output)
 
-
-
     return response
 
+def ask_question(model, db, raw_application: str, query: str):
+    documents = db.similarity_search(raw_application + " " + query)
 
+    full_prompt = f''',
+        {raw_application}\n\n
+        {(chr(10) + chr(10)).join([d.page_content for d in documents])},
+    '''
+    
+    template_str = 'Given an SF Planning application for a new development answer the following question: \n{query}\n'
+
+
+    prompt = PromptTemplate(
+        template=template_str,
+        input_variables=["query"]
+    )
+
+    prompt_and_model = prompt | model
+    response = prompt_and_model.invoke({"query": full_prompt})
+
+    return response
