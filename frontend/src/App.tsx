@@ -4,7 +4,7 @@ import check from "./check-circle-svgrepo-com.svg";
 import { CircleLoader, PropagateLoader } from "react-spinners";
 
 type Response = {
-  summary: string;
+  answer: string;
   relevant_documents: {
     name: string;
     relevance: string;
@@ -18,7 +18,7 @@ const App = () => {
   const [query, setQuery] = useState<string>("");
 
   const [response, setResponse] = useState<Response | null>(null);
-  const [answer, setAnswer] = useState<string | null>(null);
+  // const [answer, setAnswer] = useState<string | null>(null);
   const [responseLoading, setResponseLoading] = useState<boolean>(false);
 
   const onUpload = (f: File | null) => {
@@ -42,15 +42,13 @@ const App = () => {
       method: "POST",
       body: JSON.stringify({
         query,
-        application: appText ?? "",
       }),
       headers: {
         "Content-Type": "application/json",
       },
     }).then(async (r) => {
       const body = await r.json();
-      setResponse(body["summary"]);
-      setAnswer(body["answer"]);
+      setResponse(body["answer"]);
       setResponseLoading(false);
     });
   };
@@ -72,24 +70,21 @@ const App = () => {
           flexBasis: "600px",
         }}
       >
-        <UploadBox onUploadFile={onUpload} />
-        {appText && (
-          <div className="query-box">
-            <textarea
-              placeholder="Ask PlanningGPT about this application..."
-              className="textarea-hide"
-              value={query}
-              onChange={(e) => setQuery(e.currentTarget.value)}
-            />
-            <div className="submit-button" onClick={onSubmit}>
-              Submit
-            </div>
+        <div className="query-box">
+          <textarea
+            placeholder="Ask PlanningGPT about the planning code..."
+            className="textarea-hide"
+            value={query}
+            onChange={(e) => setQuery(e.currentTarget.value)}
+          />
+          <div className="submit-button" onClick={onSubmit}>
+            Submit
           </div>
-        )}
+        </div>
         {/* {answer && <div className="shit-response">{answer}</div>} */}
         {response && (
           <>
-            <div className="shit-response">{response["summary"]}</div>
+            <div className="shit-response">{response["answer"]}</div>
 
             {response["relevant_documents"].map((d) => (
               <div className="shit-response">

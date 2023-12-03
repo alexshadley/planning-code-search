@@ -15,7 +15,7 @@ from langchain.vectorstores import Chroma
 from langchain.chat_models import ChatOpenAI
 
 from backend.load import init_db_from_documents
-from backend.query import ask_question, find_relavant_docs
+from backend.query import ask_question, answer_question_with_docs
 
 from pydantic import BaseModel
 
@@ -23,8 +23,7 @@ dotenv.load_dotenv(dotenv.find_dotenv())
 
 
 class QueryBody(BaseModel):
-    query: Optional[str]
-    application: str
+    query: str
 
 
 app = FastAPI()
@@ -61,10 +60,7 @@ async def parse_pdf(file: UploadFile):
 
 @app.post("/query")
 async def query(query_body: QueryBody):
-    summary = find_relavant_docs(model, db, query_body.application)
-    answer = ""
-    if query_body.query is not None:
-        answer = ask_question(
-            model, db, query_body.application, query_body.query
-        ).content
-    return {"summary": summary, "answer": answer}
+    answer = answer_question_with_docs(model, db, query_body.query)
+    return {
+        "answer": answer,
+    }

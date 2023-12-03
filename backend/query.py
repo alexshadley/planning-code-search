@@ -16,37 +16,49 @@ class RelevantItem(BaseModel):
 
 
 class ApplicationResponse(BaseModel):
-    summary: str = Field(description="A summary of the application")
+    answer: str = Field(description="The answer to the user's question")
     relevant_documents: list[RelevantItem] = Field(
         description="A list of relevant items (section, article, ordanance, or piece of legislation)"
     )
 
 
-def find_relavant_docs(model, db, raw_application: str):
-    documents = db.similarity_search(raw_application)
+def answer_question_with_docs(model, db, query: str):
+    documents = db.similarity_search(query)
 
-    full_prompt = f""",
-        {raw_application}\n\n
-        {(chr(10) + chr(10)).join([d.page_content for d in documents])},
+    print("answering question with docs")
+    for d in documents:
+        print(d.metadata)
+        print(d.page_content)
+        print()
+
+    template_str = """
+    These are excerpts from the SF planning code. Use them when answering the user's question:
+    {documents}
+    {format_instructions}
+
+    This is the user's question:
+    {query}
     """
-
-    template_str = "Given an SF Planning application for a new development, give a summary of relavant sections, articles, ordanances, or pieces of legislation. \n{format_instructions}\n{query}\n"
 
     parser = PydanticOutputParser(pydantic_object=ApplicationResponse)
     prompt = PromptTemplate(
         template=template_str,
-        input_variables=["query"],
+        input_variables=["documents", "query"],
         partial_variables={"format_instructions": parser.get_format_instructions()},
     )
 
     prompt_and_model = prompt | model
-    output = prompt_and_model.invoke({"query": full_prompt})
+    output = prompt_and_model.invoke(
+        {
+            "documents": "\n\n".join(d.page_content for d in documents),
+            "query": query,
+        }
+    )
     response = parser.invoke(output)
-
     return response
 
 
-def ask_question(model, db, raw_application: str, query: str):
+def ask_question(model, db, raw_application: Optional[str], query: str):
     documents = db.similarity_search(raw_application + " " + query)
 
     full_prompt = f""",
