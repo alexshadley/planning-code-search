@@ -3,12 +3,12 @@ import "./App.css";
 import check from "./check-circle-svgrepo-com.svg";
 import { CircleLoader, PropagateLoader } from "react-spinners";
 
-type Resposne = {
+type Response = {
   summary: string;
   relevant_documents: {
     name: string;
     relevance: string;
-  };
+  }[];
 };
 
 const App = () => {
@@ -17,7 +17,8 @@ const App = () => {
 
   const [query, setQuery] = useState<string>("");
 
-  const [response, setResponse] = useState<string | null>(null);
+  const [response, setResponse] = useState<Response | null>(null);
+  const [answer, setAnswer] = useState<string | null>(null);
   const [responseLoading, setResponseLoading] = useState<boolean>(false);
 
   const onUpload = (f: File | null) => {
@@ -36,6 +37,7 @@ const App = () => {
   };
 
   const onSubmit = () => {
+    setResponseLoading(true);
     fetch("http://localhost:8000/query", {
       method: "POST",
       body: JSON.stringify({
@@ -47,7 +49,9 @@ const App = () => {
       },
     }).then(async (r) => {
       const body = await r.json();
-      setResponse(JSON.stringify(body));
+      setResponse(body["summary"]);
+      setAnswer(body["answer"]);
+      setResponseLoading(false);
     });
   };
 
@@ -82,7 +86,23 @@ const App = () => {
             </div>
           </div>
         )}
-        {response && <div className="shit-response">{response}</div>}
+        {/* {answer && <div className="shit-response">{answer}</div>} */}
+        {response && (
+          <>
+            <div className="shit-response">{response["summary"]}</div>
+
+            {response["relevant_documents"].map((d) => (
+              <div className="shit-response">
+                {
+                  <>
+                    <b>{d["name"]}:</b>
+                    {d["relevance"]}
+                  </>
+                }
+              </div>
+            ))}
+          </>
+        )}
         {responseLoading && <Spinner />}
       </div>
     </div>
