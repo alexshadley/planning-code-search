@@ -1,16 +1,42 @@
 
+import openai
+from pydantic import BaseModel, Field
 
-def query_documents(client, db, query):
+from langchain.output_parsers import PydanticOutputParser
+from langchain.prompts import PromptTemplate
+
+
+class RelevantItem(BaseModel):
+    name: str = Field(description="The name of the section, article, ordanance, or piece of legislation.")
+    relevance: str = Field(description="A short summary of how the item is relevant to the question.")
+
+class ApplicationResponse(BaseModel):
+    summary: str = Field(description="A summary of the application")
+    relevant_documents: list[RelevantItem] = Field(description="A list of relevant items (section, article, ordanance, or piece of legislation)")
+
+
+def query_documents(model, db, query):
+
     documents = db.similarity_search(query)
 
     full_prompt = f''',
-        These are pieces of the SF planning code. Cite them when answering the user's question:,
+        {query},
         {(chr(10) + chr(10)).join([d.page_content for d in documents])},
     '''
 
-    response = client.chat.completions.create(model="gpt-3.5-turbo", messages=[
-        {"role": "system", "content": full_prompt}, 
-        {"role": "user", "content": query},
-    ])
+    parser = PydanticOutputParser(pydantic_object=ApplicationResponse)
+    prompt = PromptTemplate(
+        template= "You provide summaries of relavant documents to a particular question concerning SF Housing regulations. \n{format_instructions}\n{query}\n",
+        input_variables=["query"],
+        partial_variables={"format_instructions": parser.get_format_instructions()},
+    )
 
-    return response.choices[0].message.content
+    prompt_and_model = prompt | model
+    output = prompt_and_model.invoke({"query": full_prompt})
+    response = parser.invoke(output)
+
+
+
+    return response
+
+
