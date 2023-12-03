@@ -47,7 +47,7 @@ const App = () => {
       },
     }).then(async (r) => {
       const body = await r.json();
-      setResponse(body["response"]);
+      setResponse(JSON.stringify(body));
     });
   };
 

@@ -29,9 +29,9 @@ class QueryBody(BaseModel):
 
 app = FastAPI()
 
-# db = Chroma(persist_directory="./chroma_db", embedding_function=OpenAIEmbeddings())
+db = Chroma(persist_directory="./chroma_db", embedding_function=OpenAIEmbeddings())
 
-# model = ChatOpenAI(model="gpt-4-1106-preview")
+model = ChatOpenAI(model="gpt-4-1106-preview")
 
 
 FRONTEND_PORT = os.getenv("PORT", str(3000))
