@@ -10,7 +10,7 @@ import dotenv
 
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.vectorstores import Chroma
-from langchain.llms import OpenAI
+from langchain.chat_models import ChatOpenAI
 
 from backend.load import init_db_from_documents
 from backend.query import query_documents
@@ -27,11 +27,11 @@ class QueryBody(BaseModel):
 
 app = FastAPI()
 
-
 db = Chroma(persist_directory="./chroma_db", embedding_function=OpenAIEmbeddings())
 
-model = OpenAI(model='gpt-4-1106-preview')
+model = ChatOpenAI(model='gpt-4-1106-preview')
 
+print(query_documents(model, db, "What is the maximum number of units allowed in a building?"))
 
 FRONTEND_PORT = os.getenv("PORT", str(3000))
 

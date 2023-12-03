@@ -26,7 +26,7 @@ def query_documents(model, db, query):
 
     parser = PydanticOutputParser(pydantic_object=ApplicationResponse)
     prompt = PromptTemplate(
-        template= "You provide summaries of relavant documents to a particular question concerning SF Housing regulations. \n{format_instructions}\n{query}\n",
+        template= "Given an SF Planning application for a new development, give a summary of relavant sections, articles, ordanances, or pieces of legislation. \n{format_instructions}\n{query}\n",
         input_variables=["query"],
         partial_variables={"format_instructions": parser.get_format_instructions()},
     )
