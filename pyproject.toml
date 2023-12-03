@@ -17,6 +17,8 @@ pydantic = "^2.5.2"
 python-multipart = "^0.0.6"
 tika = "^2.6.0"
 pypdf = "^3.17.1"
+lxml = "^4.9.3"
+beautifulsoup4 = "^4.12.2"
 
 
 [tool.poetry.group.dev.dependencies]

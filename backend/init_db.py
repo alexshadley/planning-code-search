@@ -8,9 +8,8 @@ import dotenv
 
 dotenv.load_dotenv()
 
-if __name__ == '__main__':
-        
+if __name__ == "__main__":
     embeddings_model = OpenAIEmbeddings(api_key=os.getenv("OPENAI_API_KEY"))
 
-    documents = ["san_francisco-ca-1.txt"]
+    documents = ["san_francisco-ca-2.html"]
     init_db_from_documents(documents, embeddings_model)
