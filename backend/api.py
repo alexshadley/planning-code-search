@@ -31,7 +31,7 @@ app = FastAPI()
 
 db = Chroma(persist_directory="./chroma_db", embedding_function=OpenAIEmbeddings())
 
-model = ChatOpenAI(model='gpt-4-1106-preview')
+model = ChatOpenAI(model="gpt-4-1106-preview")
 
 
 FRONTEND_PORT = os.getenv("PORT", str(3000))
@@ -62,7 +62,9 @@ async def parse_pdf(file: UploadFile):
 @app.post("/query")
 async def query(query_body: QueryBody):
     summary = find_relavant_docs(model, db, query_body.application)
-    answer = ''
+    answer = ""
     if query_body.query is not None:
-        answer = ask_question(model, db, query_body.application, query_body.query).content
+        answer = ask_question(
+            model, db, query_body.application, query_body.query
+        ).content
     return {"summary": summary, "answer": answer}

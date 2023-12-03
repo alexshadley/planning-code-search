@@ -3,13 +3,21 @@ import "./App.css";
 import check from "./check-circle-svgrepo-com.svg";
 import { CircleLoader, PropagateLoader } from "react-spinners";
 
+type Resposne = {
+  summary: string;
+  relevant_documents: {
+    name: string;
+    relevance: string;
+  };
+};
+
 const App = () => {
   const [file, setFile] = useState<File | null>(null);
   const [appText, setAppText] = useState<string | null>(null);
 
   const [query, setQuery] = useState<string>("");
 
-  const [response, setResponse] = useState<string | null>(null);
+  const [response, setResponse] = useState<Response | null>(null);
   const [responseLoading, setResponseLoading] = useState<boolean>(false);
 
   const onUpload = (f: File | null) => {
