@@ -107,15 +107,16 @@ def init_db_from_documents(document_filenames: List[str], embeddings_model: Open
 
 
 def load_document(filepath: str):
-    with open(filepath, encoding='latin-1') as f:
-        planning_code = f.read()
+    #with open(filepath, encoding='latin-1') as f:
+    #    planning_code = f.read()
 
-    if filepath.endswith('html'):
-        planning_code = preprocess_html(planning_code)
+    #if filepath.endswith('html'):
+    #    planning_code = preprocess_html(planning_code)
 
-    if ('sb' in filepath and 'txt' in filepath) or 'san_francisco-ca' in filepath:
-        chunks = chunk_legal_document(planning_code)
+    #if ('sb' in filepath and 'txt' in filepath) or 'san_francisco-ca' in filepath:
+    #    chunks = chunk_legal_document(planning_code)
 
-    else:
-        chunks = chunk_generic_document(planning_code)
+    #else:
+        
+    chunks = chunk_generic_document(planning_code)
     return chunks
