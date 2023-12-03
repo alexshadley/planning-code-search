@@ -97,3 +97,10 @@
 .submit-button:hover {
   box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 10px;
 }
+
+.shit-response {
+  margin-top: 20px;
+  padding: 20px;
+  background-color: #f3f3f3;
+  border-radius: 10px;
+}

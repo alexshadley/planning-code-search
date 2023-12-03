@@ -17,7 +17,7 @@ const App = () => {
 
   const [query, setQuery] = useState<string>("");
 
-  const [response, setResponse] = useState<Response | null>(null);
+  const [response, setResponse] = useState<string | null>(null);
   const [responseLoading, setResponseLoading] = useState<boolean>(false);
 
   const onUpload = (f: File | null) => {
@@ -82,7 +82,7 @@ const App = () => {
             </div>
           </div>
         )}
-        {response && <div>{response}</div>}
+        {response && <div className="shit-response">{response}</div>}
         {responseLoading && <Spinner />}
       </div>
     </div>
