@@ -28,13 +28,13 @@ class QueryBody(BaseModel):
 
 app = FastAPI()
 
-# embeddings_model = OpenAIEmbeddings(api_key=os.getenv("OPENAI_API_KEY"))
+embeddings_model = OpenAIEmbeddings(api_key=os.getenv("OPENAI_API_KEY"))
 
-# documents = ["../san_francisco-ca-1.txt"]
+documents = ["../san_francisco-ca-1.txt"]
 
-# db = init_db_from_documents(documents, embeddings_model)
+db = init_db_from_documents(documents, embeddings_model)
 
-# client = OpenAI()
+client = OpenAI()
 
 
 FRONTEND_PORT = os.getenv("PORT", str(3000))
