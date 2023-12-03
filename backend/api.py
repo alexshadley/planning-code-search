@@ -8,10 +8,9 @@ import tempfile
 import os
 import dotenv
 
-import openai
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.vectorstores import Chroma
-from openai import OpenAI
+from langchain.llms import OpenAI
 
 from backend.load import init_db_from_documents
 from backend.query import query_documents
@@ -28,13 +27,10 @@ class QueryBody(BaseModel):
 
 app = FastAPI()
 
-embeddings_model = OpenAIEmbeddings(api_key=os.getenv("OPENAI_API_KEY"))
 
-documents = ["../san_francisco-ca-1.txt"]
+db = Chroma(persist_directory="./chroma_db", embedding_function=OpenAIEmbeddings())
 
-db = init_db_from_documents(documents, embeddings_model)
-
-client = OpenAI()
+model = OpenAI(model='gpt-4-1106-preview')
 
 
 FRONTEND_PORT = os.getenv("PORT", str(3000))

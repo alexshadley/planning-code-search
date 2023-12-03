@@ -20,7 +20,7 @@ def chunk_document(text: str):
 def init_db_from_documents(document_filenames: List[str], embeddings_model: OpenAIEmbeddings):
     chunks = []
     for doc in document_filenames:
-        chunks.extend(chunk_document(doc))
+        chunks.extend(load_document(doc))
 
     db = Chroma.from_documents(chunks, embeddings_model, persist_directory='./chroma_db')
 
