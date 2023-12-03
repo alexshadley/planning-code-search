@@ -4,6 +4,7 @@ from langchain.embeddings import OpenAIEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.vectorstores import Chroma
 from typing import List
+from langchain_core.documents import Document
 
 
 def preprocess_html(html_content: str):
@@ -109,13 +110,36 @@ def init_db_from_documents(
 ):
     chunks = []
     for doc in document_filenames:
-        chunks.extend(load_document(doc))
+        chunks.extend(load_document_with_beautifulsoup(doc))
 
     db = Chroma.from_documents(
         chunks, embeddings_model, persist_directory="./chroma_db"
     )
 
     return db
+
+
+def load_document_with_beautifulsoup(filepath: str):
+    with open(filepath, encoding="latin-1") as f:
+        planning_code = f.read()
+
+    soup = BeautifulSoup(planning_code)
+    section_chunks = []
+    for c in list(soup.body.children):
+        if c.name == "div" and c.codeoptions:
+            section_chunks.append(
+                Document(
+                    page_content=c.get_text(),
+                    metadata={"rid": str(c.codeoptions["destid"]).split("-", 1)[1]},
+                )
+            )
+
+    splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
+    final_chunks = splitter.create_documents(
+        [c.page_content for c in section_chunks], [c.metadata for c in section_chunks]
+    )
+
+    return final_chunks
 
 
 def load_document(filepath: str):

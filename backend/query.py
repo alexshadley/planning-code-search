@@ -13,6 +13,7 @@ class RelevantItem(BaseModel):
     relevance: str = Field(
         description="A short summary of how the item is relevant to the question."
     )
+    rid: str = Field(description="The rid associated with this excerpt")
 
 
 class ApplicationResponse(BaseModel):
@@ -24,12 +25,6 @@ class ApplicationResponse(BaseModel):
 
 def answer_question_with_docs(model, db, query: str):
     documents = db.similarity_search(query)
-
-    print("answering question with docs")
-    for d in documents:
-        print(d.metadata)
-        print(d.page_content)
-        print()
 
     template_str = """
     These are excerpts from the SF planning code. Use them when answering the user's question:
@@ -47,10 +42,15 @@ def answer_question_with_docs(model, db, query: str):
         partial_variables={"format_instructions": parser.get_format_instructions()},
     )
 
+    documents_text = "\n\n".join(
+        str(d.metadata) + "\n" + d.page_content for d in documents
+    )
+    print("docs", documents_text)
+
     prompt_and_model = prompt | model
     output = prompt_and_model.invoke(
         {
-            "documents": "\n\n".join(d.page_content for d in documents),
+            "documents": documents_text,
             "query": query,
         }
     )

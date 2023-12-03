@@ -8,6 +8,7 @@ type Response = {
   relevant_documents: {
     name: string;
     relevance: string;
+    rid: string;
   }[];
 };
 
@@ -90,7 +91,12 @@ const App = () => {
               <div className="shit-response">
                 {
                   <>
-                    <b>{d["name"]}:</b>
+                    <a
+                      target="_blank"
+                      href={`https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_planning/${d.rid}`}
+                    >
+                      {d["name"]}:
+                    </a>
                     {d["relevance"]}
                   </>
                 }
