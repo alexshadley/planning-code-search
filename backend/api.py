@@ -16,17 +16,25 @@ from openai import OpenAI
 from backend.load import init_db_from_documents
 from backend.query import query_documents
 
+from pydantic import BaseModel
+
 dotenv.load_dotenv(dotenv.find_dotenv())
+
+
+class QueryBody(BaseModel):
+    query: str
+    application: str
+
 
 app = FastAPI()
 
-embeddings_model = OpenAIEmbeddings(api_key=os.getenv("OPENAI_API_KEY"))
+# embeddings_model = OpenAIEmbeddings(api_key=os.getenv("OPENAI_API_KEY"))
 
-documents = ["../san_francisco-ca-1.txt"]
+# documents = ["../san_francisco-ca-1.txt"]
 
-db = init_db_from_documents(documents, embeddings_model)
+# db = init_db_from_documents(documents, embeddings_model)
 
-client = OpenAI()
+# client = OpenAI()
 
 
 FRONTEND_PORT = os.getenv("PORT", str(3000))
@@ -52,6 +60,12 @@ async def parse_pdf(file: UploadFile):
     reader = PdfReader(file.file)
     text = "".join(p.extract_text() for p in reader.pages)
     return {"text": text}
+
+
+@app.post("/query")
+async def query(query_body: QueryBody):
+    print(query_body)
+    return {"response": "idk figure it out"}
 
 
 # app.mount("/app", StaticFiles(directory="build"), name="root")

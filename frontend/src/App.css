@@ -36,3 +36,55 @@
     transform: rotate(360deg);
   }
 }
+
+.file-input-box {
+  margin-top: 20px;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  background-color: #f3f3f3;
+  border-radius: 10px;
+}
+
+.file-input-button {
+  border: 1px solid #ccc ;
+  border-radius: 5px;
+  background-color: #fff;
+  padding: 5px;
+  cursor: pointer;
+}
+
+.filter-green {
+  filter: invert(36%) sepia(43%) saturate(1590%) hue-rotate(79deg) brightness(98%) contrast(100%);
+}
+
+.query-box {
+  margin-top: 40px;
+  height: 40px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  gap: 5px
+}
+
+.textarea-hide {
+  font-family: inherit;
+  flex-basis: 90%;
+  border: none;
+  resize: none;
+  outline: none;
+
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+}
+
+.submit-button {
+  flex-basis: 10%;
+  background-color: #07b50a;
+  color: #fff;
+  padding: 10px;
+  text-align: center; 
+  border-radius: 5px;
+}
