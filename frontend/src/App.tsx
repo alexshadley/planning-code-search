@@ -1,7 +1,6 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import "./App.css";
-import check from "./check-circle-svgrepo-com.svg";
-import { CircleLoader, PropagateLoader } from "react-spinners";
+import { PropagateLoader } from "react-spinners";
 
 type Response = {
   answer: string;
@@ -13,8 +12,8 @@ type Response = {
 };
 
 const App = () => {
-  const [file, setFile] = useState<File | null>(null);
-  const [appText, setAppText] = useState<string | null>(null);
+  // const [file, setFile] = useState<File | null>(null);
+  // const [appText, setAppText] = useState<string | null>(null);
 
   const [query, setQuery] = useState<string>("");
 
@@ -22,20 +21,20 @@ const App = () => {
   // const [answer, setAnswer] = useState<string | null>(null);
   const [responseLoading, setResponseLoading] = useState<boolean>(false);
 
-  const onUpload = (f: File | null) => {
-    setFile(f);
+  // const onUpload = (f: File | null) => {
+  //   setFile(f);
 
-    const data: any = new FormData();
-    data.append("file", f);
+  //   const data: any = new FormData();
+  //   data.append("file", f);
 
-    fetch("/api/parse_pdf", {
-      method: "POST",
-      body: data,
-    }).then(async (r) => {
-      const body = await r.json();
-      setAppText(body["text"]);
-    });
-  };
+  //   fetch("/api/parse_pdf", {
+  //     method: "POST",
+  //     body: data,
+  //   }).then(async (r) => {
+  //     const body = await r.json();
+  //     setAppText(body["text"]);
+  //   });
+  // };
 
   const onSubmit = () => {
     setResponseLoading(true);
@@ -94,6 +93,7 @@ const App = () => {
                     <a
                       target="_blank"
                       href={`https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_planning/${d.rid}`}
+                      rel="noreferrer"
                     >
                       {d["name"]}:
                     </a>
@@ -110,47 +110,47 @@ const App = () => {
   );
 };
 
-const UploadBox = ({
-  onUploadFile,
-}: {
-  onUploadFile: (file: File | null) => void;
-}) => {
-  const inputRef = useRef<null | HTMLInputElement>(null);
-  const [fileName, setFileName] = useState<null | string>(null);
+// const UploadBox = ({
+//   onUploadFile,
+// }: {
+//   onUploadFile: (file: File | null) => void;
+// }) => {
+//   const inputRef = useRef<null | HTMLInputElement>(null);
+//   const [fileName, setFileName] = useState<null | string>(null);
 
-  return (
-    <div className="file-input-box">
-      {fileName ? (
-        <div
-          style={{
-            display: "flex",
-            width: "100%",
-            justifyContent: "space-between",
-          }}
-        >
-          <div>{fileName}</div>
-          <img src={check} width="25px" className="filter-green" />
-        </div>
-      ) : (
-        <div
-          className="file-input-button"
-          onClick={() => inputRef.current?.click()}
-        >
-          Upload application
-        </div>
-      )}
-      <input
-        ref={inputRef}
-        style={{ display: "none" }}
-        type="file"
-        onChange={(e) => {
-          onUploadFile(e.currentTarget.files?.[0] ?? null);
-          setFileName(e.currentTarget.files?.[0].name ?? null);
-        }}
-      />
-    </div>
-  );
-};
+//   return (
+//     <div className="file-input-box">
+//       {fileName ? (
+//         <div
+//           style={{
+//             display: "flex",
+//             width: "100%",
+//             justifyContent: "space-between",
+//           }}
+//         >
+//           <div>{fileName}</div>
+//           <img src={check} width="25px" className="filter-green" />
+//         </div>
+//       ) : (
+//         <div
+//           className="file-input-button"
+//           onClick={() => inputRef.current?.click()}
+//         >
+//           Upload application
+//         </div>
+//       )}
+//       <input
+//         ref={inputRef}
+//         style={{ display: "none" }}
+//         type="file"
+//         onChange={(e) => {
+//           onUploadFile(e.currentTarget.files?.[0] ?? null);
+//           setFileName(e.currentTarget.files?.[0].name ?? null);
+//         }}
+//       />
+//     </div>
+//   );
+// };
 
 const Spinner = ({ text }: { text?: string }) => {
   return (
