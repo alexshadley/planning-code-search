@@ -127,10 +127,16 @@ def load_document_with_beautifulsoup(filepath: str):
     section_chunks = []
     for c in list(soup.body.children):
         if c.name == "div" and c.codeoptions:
+            section_text = ""
+            if section := c.find_previous(class_="Section"):
+                section_text = section.get_text()
             section_chunks.append(
                 Document(
                     page_content=c.get_text(),
-                    metadata={"rid": str(c.codeoptions["destid"]).split("-", 1)[1]},
+                    metadata={
+                        "section": section_text,
+                        "rid": str(c.codeoptions["destid"]).split("-", 1)[1],
+                    },
                 )
             )
 
@@ -138,6 +144,14 @@ def load_document_with_beautifulsoup(filepath: str):
     final_chunks = splitter.create_documents(
         [c.page_content for c in section_chunks], [c.metadata for c in section_chunks]
     )
+    final_chunks = [
+        # we want the section name included in embeddings
+        Document(
+            page_content=c.metadata["section"] + "\n" + c.page_content,
+            metadata=c.metadata,
+        )
+        for c in final_chunks
+    ]
 
     return final_chunks
 
