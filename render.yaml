@@ -4,5 +4,5 @@ services:
     runtime: python
     plan: free
     autoDeploy: false
-    buildCommand: poetry install && cd frontend && yarn build
+    buildCommand: poetry install && cd frontend && yarn && yarn build
     startCommand: poetry run uvicorn backend.api:app --host=0.0.0.0 --port $PORT
