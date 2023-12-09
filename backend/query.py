@@ -23,8 +23,11 @@ class ApplicationResponse(BaseModel):
     )
 
 
-def answer_question_with_docs(model, db, query: str):
-    documents = db.similarity_search(query)
+def answer_question_with_docs(model, embeddings_model, pinecone_index, query: str):
+    query_embeddings = embeddings_model.embed_query(query)
+    matches = pinecone_index.query(
+        vector=query_embeddings, top_k=6, include_metadata=True
+    )["matches"]
 
     template_str = """
     These are excerpts from the SF planning code. Use them when answering the user's question:
@@ -42,9 +45,7 @@ def answer_question_with_docs(model, db, query: str):
         partial_variables={"format_instructions": parser.get_format_instructions()},
     )
 
-    documents_text = "\n\n".join(
-        str(d.metadata) + "\n" + d.page_content for d in documents
-    )
+    documents_text = "\n\n".join(str(d["metadata"]) for d in matches)
     print("docs", documents_text)
 
     prompt_and_model = prompt | model

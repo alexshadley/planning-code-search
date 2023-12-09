@@ -105,6 +105,14 @@ def chunk_nonplanning_document(text: str):
     return chunks
 
 
+def get_chunks(document_filenames: List[str]):
+    chunks = []
+    for doc in document_filenames:
+        chunks.extend(load_document_with_beautifulsoup(doc))
+
+    return chunks
+
+
 def init_db_from_documents(
     document_filenames: List[str], embeddings_model: OpenAIEmbeddings
 ):

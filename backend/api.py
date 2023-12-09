@@ -1,4 +1,5 @@
 import json
+import pinecone
 from typing import Optional
 from fastapi import FastAPI, UploadFile
 from fastapi.responses import FileResponse, RedirectResponse
@@ -9,9 +10,8 @@ from pypdf import PdfReader
 import os
 import dotenv
 
-from langchain.embeddings import OpenAIEmbeddings
-from langchain.vectorstores import Chroma
 from langchain.chat_models import ChatOpenAI
+from langchain.embeddings import OpenAIEmbeddings
 
 from backend.query import answer_question_with_docs
 
@@ -29,9 +29,12 @@ class QueryBody(BaseModel):
 
 app = FastAPI()
 
-db = Chroma(persist_directory="./chroma_db", embedding_function=OpenAIEmbeddings())
-
 model = ChatOpenAI(model="gpt-4-1106-preview")
+
+embeddings_model = OpenAIEmbeddings()
+
+pinecone.init(api_key=os.getenv("PINECONE_API_KEY"), environment="gcp-starter")
+pinecone_index = pinecone.Index("planning-code-chunks")
 
 
 FRONTEND_PORT = os.getenv("PORT", str(3000))
@@ -71,7 +74,9 @@ async def parse_pdf(file: UploadFile):
 
 @app.post("/api/query")
 async def query(query_body: QueryBody):
-    answer = answer_question_with_docs(model, db, query_body.query)
+    answer = answer_question_with_docs(
+        model, embeddings_model, pinecone_index, query_body.query
+    )
     return {
         "answer": answer,
     }

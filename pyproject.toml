@@ -19,6 +19,7 @@ tika = "^2.6.0"
 pypdf = "^3.17.1"
 lxml = "^4.9.3"
 beautifulsoup4 = "^4.12.2"
+pinecone-client = "^2.2.4"
 
 
 [tool.poetry.group.dev.dependencies]
