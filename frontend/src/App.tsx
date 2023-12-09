@@ -28,7 +28,7 @@ const App = () => {
     const data: any = new FormData();
     data.append("file", f);
 
-    fetch("http://localhost:8000/parse_pdf", {
+    fetch("/api/parse_pdf", {
       method: "POST",
       body: data,
     }).then(async (r) => {
@@ -39,7 +39,7 @@ const App = () => {
 
   const onSubmit = () => {
     setResponseLoading(true);
-    fetch("http://localhost:8000/query", {
+    fetch("/api/query", {
       method: "POST",
       body: JSON.stringify({
         query,

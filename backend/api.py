@@ -1,11 +1,10 @@
 import json
 from typing import Optional
 from fastapi import FastAPI, UploadFile
-from fastapi.responses import RedirectResponse
+from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pypdf import PdfReader
-import tempfile
 
 import os
 import dotenv
@@ -14,10 +13,12 @@ from langchain.embeddings import OpenAIEmbeddings
 from langchain.vectorstores import Chroma
 from langchain.chat_models import ChatOpenAI
 
-from backend.load import init_db_from_documents
-from backend.query import ask_question, answer_question_with_docs
+from backend.query import answer_question_with_docs
 
 from pydantic import BaseModel
+
+from pathlib import Path
+
 
 dotenv.load_dotenv(dotenv.find_dotenv())
 
@@ -50,15 +51,25 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+frontend_path = Path(__file__).parent.parent / "frontend" / "build"
 
-@app.post("/parse_pdf")
+app.mount("/static", StaticFiles(directory=frontend_path / "static"), name="static")
+
+
+@app.get("/")
+async def read_root():
+    # return "hi"
+    return FileResponse(frontend_path / "index.html")
+
+
+@app.post("/api/parse_pdf")
 async def parse_pdf(file: UploadFile):
     reader = PdfReader(file.file)
     text = "".join(p.extract_text() for p in reader.pages)
     return {"text": text}
 
 
-@app.post("/query")
+@app.post("/api/query")
 async def query(query_body: QueryBody):
     answer = answer_question_with_docs(model, db, query_body.query)
     return {
