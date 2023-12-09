@@ -2,7 +2,6 @@ import string
 from bs4 import BeautifulSoup
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.vectorstores import Chroma
 from typing import List
 from langchain_core.documents import Document
 
@@ -113,18 +112,18 @@ def get_chunks(document_filenames: List[str]):
     return chunks
 
 
-def init_db_from_documents(
-    document_filenames: List[str], embeddings_model: OpenAIEmbeddings
-):
-    chunks = []
-    for doc in document_filenames:
-        chunks.extend(load_document_with_beautifulsoup(doc))
+# def init_db_from_documents(
+#     document_filenames: List[str], embeddings_model: OpenAIEmbeddings
+# ):
+#     chunks = []
+#     for doc in document_filenames:
+#         chunks.extend(load_document_with_beautifulsoup(doc))
 
-    db = Chroma.from_documents(
-        chunks, embeddings_model, persist_directory="./chroma_db"
-    )
+#     # db = Chroma.from_documents(
+#     #     chunks, embeddings_model, persist_directory="./chroma_db"
+#     # )
 
-    return db
+#     return db
 
 
 def load_document_with_beautifulsoup(filepath: str):
