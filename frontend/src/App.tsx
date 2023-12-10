@@ -70,6 +70,12 @@ const App = () => {
           flexBasis: "600px",
         }}
       >
+        <h1>PlanningGPT</h1>
+        <div>
+          Interact with the SF Planning Code. A project by Alex Shadley, Jacob
+          Marshal, and Salim Damerdji. If you have feedback email me at
+          shadleyalex@gmail.com
+        </div>
         <div className="query-box">
           <textarea
             placeholder="Ask PlanningGPT about the planning code..."
