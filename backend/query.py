@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List, Optional
 import openai
 from pydantic import BaseModel, Field
 
@@ -23,11 +23,17 @@ class ApplicationResponse(BaseModel):
     )
 
 
-def answer_question_with_docs(model, embeddings_model, pinecone_index, query: str):
-    query_embeddings = embeddings_model.embed_query(query)
-    matches = pinecone_index.query(
-        vector=query_embeddings, top_k=6, include_metadata=True
-    )["matches"]
+def answer_question_with_docs(
+    model, embeddings_model, pinecone_index, query_parts: List[str]
+):
+    matches = []
+    for part in query_parts:
+        query_embeddings = embeddings_model.embed_query(part)
+        matches.extend(
+            pinecone_index.query(
+                vector=query_embeddings, top_k=3, include_metadata=True
+            )["matches"]
+        )
 
     template_str = """
     These are excerpts from the SF planning code. Use them when answering the user's question:
@@ -52,7 +58,7 @@ def answer_question_with_docs(model, embeddings_model, pinecone_index, query: st
     output = prompt_and_model.invoke(
         {
             "documents": documents_text,
-            "query": query,
+            "query": "\n".join(query_parts),
         }
     )
     response = parser.invoke(output)

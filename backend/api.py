@@ -12,6 +12,7 @@ import dotenv
 
 from langchain.chat_models import ChatOpenAI
 from langchain.embeddings import OpenAIEmbeddings
+from backend.address_lookup import extract_addresses, get_data_for_addresses
 
 from backend.query import answer_question_with_docs
 
@@ -74,8 +75,21 @@ async def parse_pdf(file: UploadFile):
 
 @app.post("/api/query")
 async def query(query_body: QueryBody):
+    query = query_body.query
+
+    print("query", query)
+    addrs = extract_addresses(query)
+    print("addrs", addrs)
+    query_parts = [query]
+    if len(addrs):
+        query_parts.append(
+            f"This address has the following zoning district: {get_data_for_addresses(addrs)[0]['zoning_use_district_name'][0]} ({get_data_for_addresses(addrs)[0]['zoning_use_district'][0]})"
+        )
+
+    print("query", query_parts)
+
     answer = answer_question_with_docs(
-        model, embeddings_model, pinecone_index, query_body.query
+        model, embeddings_model, pinecone_index, query_parts
     )
     return {
         "answer": answer,
