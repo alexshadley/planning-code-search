@@ -3,6 +3,6 @@ services:
     name: planning-gpt
     runtime: python
     plan: free
-    autoDeploy: false
+    autoDeploy: true
     buildCommand: poetry install && cd frontend && yarn && yarn build
     startCommand: poetry run uvicorn backend.api:app --host=0.0.0.0 --port $PORT
