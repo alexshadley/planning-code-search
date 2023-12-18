@@ -24,7 +24,11 @@ def load_geo_from_csv(file_name, geo_col):
     return df
 
 
-# prc = load_geo_from_csv("./sf_parcels.csv.gz", "shape")
+prc = pd.read_csv(
+    "./sf_parcels.csv.gz",
+    usecols=["from_address_num", "to_address_num", "street_name", "shape"],
+)
+prc = to_geo(prc, "shape")
 zn = load_geo_from_csv("./sf_zoning.csv.gz", "the_geom")
 
 
@@ -73,24 +77,24 @@ def get_data_for_addresses(addresses: List[Address]):
     result = []
     for a in addresses:
         # TODO: make chunking less janky
-        chunksize = 10**5
-        with pd.read_csv("sf_parcels.csv.gz", chunksize=chunksize) as reader:
-            for prc in reader:
-                prc = to_geo(prc, "shape")
-                parcels = prc[
-                    (prc["street_name"] == a.street)
-                    & (prc["from_address_num"] <= a.number)
-                    & (a.number <= prc["to_address_num"])
-                ]
-                if len(parcels) > 0:
-                    zoning = gpd.sjoin(parcels, zn, how="inner", predicate="intersects")
+        # chunksize = 10**5
+        # with pd.read_csv("sf_parcels.csv.gz", chunksize=chunksize) as reader:
+        # for prc in reader:
+        #     prc = to_geo(prc, "shape")
+        parcels = prc[
+            (prc["street_name"] == a.street)
+            & (prc["from_address_num"] <= a.number)
+            & (a.number <= prc["to_address_num"])
+        ]
+        if len(parcels) > 0:
+            zoning = gpd.sjoin(parcels, zn, how="inner", predicate="intersects")
 
-                    result.append(
-                        {
-                            "address": a,
-                            "zoning_use_district": zoning["zoning"].tolist(),
-                            "zoning_use_district_name": zoning["districtname"].tolist(),
-                        }
-                    )
+            result.append(
+                {
+                    "address": a,
+                    "zoning_use_district": zoning["zoning"].tolist(),
+                    "zoning_use_district_name": zoning["districtname"].tolist(),
+                }
+            )
 
     return result

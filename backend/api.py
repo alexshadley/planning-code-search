@@ -83,7 +83,7 @@ async def query(query_body: QueryBody):
     query_parts = [query]
     if len(addrs):
         query_parts.append(
-            f"This address has the following zoning district: {get_data_for_addresses(addrs)[0]['zoning_use_district_name'][0]} ({get_data_for_addresses(addrs)[0]['zoning_use_district'][0]})"
+            f"This address has the following zoning data: {get_data_for_addresses(addrs)}"
         )
 
     print("query", query_parts)
