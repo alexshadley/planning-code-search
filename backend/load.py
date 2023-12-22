@@ -2,7 +2,6 @@ import string
 from bs4 import BeautifulSoup
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.vectorstores import Chroma
 from typing import List
 from langchain_core.documents import Document
 
@@ -105,18 +104,26 @@ def chunk_nonplanning_document(text: str):
     return chunks
 
 
-def init_db_from_documents(
-    document_filenames: List[str], embeddings_model: OpenAIEmbeddings
-):
+def get_chunks(document_filenames: List[str]):
     chunks = []
     for doc in document_filenames:
         chunks.extend(load_document_with_beautifulsoup(doc))
 
-    db = Chroma.from_documents(
-        chunks, embeddings_model, persist_directory="./chroma_db"
-    )
+    return chunks
 
-    return db
+
+# def init_db_from_documents(
+#     document_filenames: List[str], embeddings_model: OpenAIEmbeddings
+# ):
+#     chunks = []
+#     for doc in document_filenames:
+#         chunks.extend(load_document_with_beautifulsoup(doc))
+
+#     # db = Chroma.from_documents(
+#     #     chunks, embeddings_model, persist_directory="./chroma_db"
+#     # )
+
+#     return db
 
 
 def load_document_with_beautifulsoup(filepath: str):
@@ -127,10 +134,16 @@ def load_document_with_beautifulsoup(filepath: str):
     section_chunks = []
     for c in list(soup.body.children):
         if c.name == "div" and c.codeoptions:
+            section_text = ""
+            if section := c.find_previous(class_="Section"):
+                section_text = section.get_text()
             section_chunks.append(
                 Document(
                     page_content=c.get_text(),
-                    metadata={"rid": str(c.codeoptions["destid"]).split("-", 1)[1]},
+                    metadata={
+                        "section": section_text,
+                        "rid": str(c.codeoptions["destid"]).split("-", 1)[1],
+                    },
                 )
             )
 
@@ -138,6 +151,14 @@ def load_document_with_beautifulsoup(filepath: str):
     final_chunks = splitter.create_documents(
         [c.page_content for c in section_chunks], [c.metadata for c in section_chunks]
     )
+    final_chunks = [
+        # we want the section name included in embeddings
+        Document(
+            page_content=c.metadata["section"] + "\n" + c.page_content,
+            metadata=c.metadata,
+        )
+        for c in final_chunks
+    ]
 
     return final_chunks
 

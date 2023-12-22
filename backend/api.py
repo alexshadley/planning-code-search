@@ -1,23 +1,25 @@
 import json
+import pinecone
 from typing import Optional
 from fastapi import FastAPI, UploadFile
-from fastapi.responses import RedirectResponse
+from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pypdf import PdfReader
-import tempfile
 
 import os
 import dotenv
 
-from langchain.embeddings import OpenAIEmbeddings
-from langchain.vectorstores import Chroma
 from langchain.chat_models import ChatOpenAI
+from langchain.embeddings import OpenAIEmbeddings
+from backend.address_lookup import extract_addresses, get_data_for_addresses
 
-from backend.load import init_db_from_documents
-from backend.query import ask_question, answer_question_with_docs
+from backend.query import answer_question_with_docs
 
 from pydantic import BaseModel
+
+from pathlib import Path
+
 
 dotenv.load_dotenv(dotenv.find_dotenv())
 
@@ -28,9 +30,12 @@ class QueryBody(BaseModel):
 
 app = FastAPI()
 
-db = Chroma(persist_directory="./chroma_db", embedding_function=OpenAIEmbeddings())
-
 model = ChatOpenAI(model="gpt-4-1106-preview")
+
+embeddings_model = OpenAIEmbeddings()
+
+pinecone.init(api_key=os.getenv("PINECONE_API_KEY"), environment="gcp-starter")
+pinecone_index = pinecone.Index("planning-code-chunks")
 
 
 FRONTEND_PORT = os.getenv("PORT", str(3000))
@@ -50,17 +55,42 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+frontend_path = Path(__file__).parent.parent / "frontend" / "build"
 
-@app.post("/parse_pdf")
+app.mount("/static", StaticFiles(directory=frontend_path / "static"), name="static")
+
+
+@app.get("/")
+async def read_root():
+    # return "hi"
+    return FileResponse(frontend_path / "index.html")
+
+
+@app.post("/api/parse_pdf")
 async def parse_pdf(file: UploadFile):
     reader = PdfReader(file.file)
     text = "".join(p.extract_text() for p in reader.pages)
     return {"text": text}
 
 
-@app.post("/query")
+@app.post("/api/query")
 async def query(query_body: QueryBody):
-    answer = answer_question_with_docs(model, db, query_body.query)
+    query = query_body.query
+
+    print("query", query)
+    addrs = extract_addresses(query)
+    print("addrs", addrs)
+    query_parts = [query]
+    if len(addrs):
+        query_parts.append(
+            f"This address has the following zoning data: {get_data_for_addresses(addrs)}"
+        )
+
+    print("query", query_parts)
+
+    answer = answer_question_with_docs(
+        model, embeddings_model, pinecone_index, query_parts
+    )
     return {
         "answer": answer,
     }
