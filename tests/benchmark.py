@@ -82,15 +82,15 @@ benchmark = {
    "Can you list all of the neighborhood commercial districts in San Francisco?":
        "They are " + ' '.join(neighborhood_commercial_districts),
 
-    # Testing recall 2
-    "Can you list all of the neighborhood commercial districts in San Francisco?":
+    # Testing recall 3
+    "Can you list all of the preservation districts in San Francisco?":
         "They are " + ' '.join(preservation_districts),
 
     # This test picks out whether we can read from a table. Also whether we understand that C in the table refers to conditional uses
     "In NC-1, can I keep my yoga studio open until 11:45 pm?":
         "Store hours that extend between 11 pm and 2 am are only conditionally permitted in NC-1.",
 
-    # Cross-textual references
+    # Cross-textual references (goal of this test is to see if we can realize one section of code is trumped by another
     #"What temporary uses are permitted in the Mission Bay Use District?",
     #        ""
     
@@ -180,3 +180,4 @@ gpt4_pairs = {
 }
 
 
+print(len(gpt4_pairs) + len(benchmark))
