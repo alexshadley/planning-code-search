@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
 import { PropagateLoader } from "react-spinners";
 
@@ -14,8 +14,58 @@ type Response = {
 const App = () => {
   // const [file, setFile] = useState<File | null>(null);
   // const [appText, setAppText] = useState<string | null>(null);
-
+  const [placeholder, setPlaceholder] = useState('');
   const [query, setQuery] = useState<string>("");
+  const [isFocused, setIsFocused] = useState(false);
+
+   useEffect(() => {
+     const phrases = [
+       'How is 387 Market zoned?',
+       'Where can I build the tallest building?',
+       'How can I lose my minigolf permit?'
+     ];
+     let currentPhraseIndex = 0;
+     let charIndex = -1;
+     let direction = 'forward';
+     let interval: ReturnType<typeof setInterval>;
+
+     const startTypingAnimation = () => {
+      interval = setInterval(() => {
+       if (direction === 'forward') {
+         if (charIndex < phrases[currentPhraseIndex].length - 1) {
+           charIndex++;
+           setPlaceholder(prev => prev + phrases[currentPhraseIndex][charIndex]);
+         } else {
+            setTimeout(() => {
+            direction = 'backward';
+            charIndex--;
+             }, 100); // Pause at the end of a phrase
+           }
+       } else {
+         if (charIndex > 0) {
+           setPlaceholder(prev => prev.slice(0, -1));
+           charIndex--;
+         } else {
+           setPlaceholder(''); // Clear the placeholder before starting new phrase
+           direction = 'forward';
+           currentPhraseIndex = (currentPhraseIndex + 1) % phrases.length;
+           charIndex = -1;
+         }
+       }
+     }, 50); // Speed of typing animation
+    };
+
+    const stopTypingAnimation = () => {
+        clearInterval(interval);
+        setPlaceholder(''); // Optionally clear the placeholder when focused
+    };
+
+     if (!isFocused) {
+       startTypingAnimation();
+     }
+
+     return () => clearInterval(interval);
+   }, []);
 
   const [response, setResponse] = useState<Response | null>(null);
   // const [answer, setAnswer] = useState<string | null>(null);
@@ -78,10 +128,12 @@ const App = () => {
         </div>
         <div className="query-box">
           <textarea
-            placeholder="Ask PlanningGPT about the planning code..."
+            placeholder={placeholder}
             className="textarea-hide"
             value={query}
             onChange={(e) => setQuery(e.currentTarget.value)}
+            onFocus={() => {setIsFocused(true); setPlaceholder('');}}
+            onBlur={() => setIsFocused(false)}
           />
           <div className="submit-button" onClick={onSubmit}>
             Submit
