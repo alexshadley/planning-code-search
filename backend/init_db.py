@@ -21,15 +21,18 @@ def batch(items, size=20):
     return batches
 
 
-if __name__ == "__main__":
+def setup(relative_path=''):
     pinecone.init(api_key=os.getenv("PINECONE_API_KEY"), environment="gcp-starter")
 
-    pinecone.delete_index("planning-code-chunks")
+    try:
+        pinecone.delete_index("planning-code-chunks")
+    except pinecone.NotFoundException:
+        pass
     pinecone.create_index("planning-code-chunks", dimension=1536)
 
     embeddings_model = OpenAIEmbeddings(api_key=os.getenv("OPENAI_API_KEY"))
 
-    documents = ["san_francisco-ca-2.html"]
+    documents = [relative_path + "san_francisco-ca-2.html" ]
     chunks = get_chunks(documents)
 
     embeddings = embeddings_model.embed_documents([c.page_content for c in chunks])
@@ -43,3 +46,6 @@ if __name__ == "__main__":
                 for (e, d) in b
             ]
         )
+
+if __name__ == "__main__":
+    setup()

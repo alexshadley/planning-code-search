@@ -1,3 +1,21 @@
+import os
+from ragas import evaluate
+from ragas.metrics import (
+    answer_relevancy,
+    faithfulness,
+    ContextRecall,
+    ContextPrecision,
+    AnswerSimilarity
+)
+import pinecone
+from datasets import Dataset
+
+from backend.query import answer_question_with_docs
+from backend import init_db
+from langchain.chat_models import ChatOpenAI
+from langchain.embeddings import OpenAIEmbeddings
+
+
 # 78
 zoning_districts = ['BR-MU', 'C-2', 'C-3-G', 'C-3-O', 'C-3-O(SD)', 'C-3-R', 'C-3-S', 'CCB', 'CMUO', 'CRNC', 'CVR',
                     'HP-RA', 'M-1', 'M-2', 'MB-O', 'MB-OS', 'MB-RA', 'MR-MU', 'MUG', 'MUO', 'MUR', 'NC-1', 'NC-2',
@@ -60,15 +78,14 @@ benchmark = {
 
     # Can we read tables with merged cells
     "Can I build off-street parking in mission bay's OFFICE, COMMERCIAL-INDUSTRIAL AND HOTEL district?":
-    'It is required in the COMMERCIAL-INDUSTRIAL AND HOTEL districts, and for the office district, the rule is'
-    'described as follows: 1 space/1,000 s.f. or 2.5 spaces/1,000 s.f. on property zoned MB-CI east of Owens St.',
-            
+        'It is required in the COMMERCIAL-INDUSTRIAL AND HOTEL districts, and for the office district, the rule is'
+        'described as follows: 1 space/1,000 s.f. or 2.5 spaces/1,000 s.f. on property zoned MB-CI east of Owens St.',
 
     # Actual mistake from the past.
     # PlanningGPT cites heights from South Beach Downtown Residential Mixed Use District
     # when asked about Transbay Downtown Residential Mixed Use District
     'How tall can you build in the Transbay Downtown Residential Mixed Use District?':
-    'This information is contained in Transbay Redevelopment Project Area, not in the SF Planning Code',
+        'This information is contained in Transbay Redevelopment Project Area, not in the SF Planning Code',
 
     # Interpretation
     "Is supportive housing for the homeless technically a dwelling unit?":
@@ -79,8 +96,8 @@ benchmark = {
         "They are " + ' '.join(zoning_districts),
 
     # Testing recall 2
-   "Can you list all of the neighborhood commercial districts in San Francisco?":
-       "They are " + ' '.join(neighborhood_commercial_districts),
+    "Can you list all of the neighborhood commercial districts in San Francisco?":
+        "They are " + ' '.join(neighborhood_commercial_districts),
 
     # Testing recall 3
     "Can you list all of the preservation districts in San Francisco?":
@@ -91,9 +108,9 @@ benchmark = {
         "Store hours that extend between 11 pm and 2 am are only conditionally permitted in NC-1.",
 
     # Cross-textual references (goal of this test is to see if we can realize one section of code is trumped by another
-    #"What temporary uses are permitted in the Mission Bay Use District?",
+    # "What temporary uses are permitted in the Mission Bay Use District?",
     #        ""
-    
+
     # This test evaluates whether we can pick up on cross-textual references that, frankly, don't make sense
     "Tell me about the interpretitive ambiguities in uses permitted in the Mission Bay Use District, "
     "with respect to enclosure of permitted uses. Comment only on the interpretative ambiguity that is noted in the code.":
@@ -110,13 +127,10 @@ benchmark = {
         " and private funding sources to provide housing, counseling and training to the disadvantaged. Since "
         "the agency is a bona fide nonprofit, social service agency providing counseling as well as training on "
         "site, this use would be considered either a personal service [per Section 218, 790.116 or 890.116] or "
-        "an institutional use [per Section 209.3, 218, 790.50(a) or (c) or 890.50(f)]."
-}
+        "an institutional use [per Section 209.3, 218, 790.50(a) or (c) or 890.50(f)].",
 
-# gpt4 generated
-# the following are question answer pairs provided by gpt4 when the context window includes SEC. 250 through SEC. 263.13.
+    # THE FOLLOWING ARE GPT4 GENERATED ####
 
-gpt4_pairs = {
     'Q: Under Section 250(e), how does the provision of Article 2.5 apply '
     'to properties and developments in San Francisco?':
         'A: The provision of Article 2.5 applies to all properties and developments,'
@@ -179,5 +193,56 @@ gpt4_pairs = {
         'pedestrian environment while allowing for development.'
 }
 
+print(len(benchmark))
 
-print(len(gpt4_pairs) + len(benchmark))
+#1.41 to
+def test_qa_pair():
+    model = ChatOpenAI(model="gpt-3.5-turbo-1106")
+    embeddings_model = OpenAIEmbeddings()
+    # init_db.setup(relative_path='../')
+    pinecone.init(api_key=os.getenv("PINECONE_API_KEY"), environment="gcp-starter")
+    pinecone_index = pinecone.Index("planning-code-chunks")
+
+    questions, answers, ground_truths, contexts = [], [], [], []
+
+    for question, expected in benchmark.items():
+        actual = answer_question_with_docs(
+            model=model,
+            embeddings_model=embeddings_model,
+            pinecone_index=pinecone_index,
+            query_parts=[question]
+        )
+        questions.append(question)
+        answers.append(actual.answer)
+        contexts.append([str(d) for d in actual.relevant_documents])
+        ground_truths.append([expected])
+
+    # TODO: the context used probably is not what i should be passing.
+    # bc the context Im passing does not include underlying text of sections, only summaries
+
+    data = Dataset.from_dict({
+        'question': questions,
+        'answer': answers,
+        'contexts': contexts,
+        'ground_truths': ground_truths  # must be list
+    })
+
+    # Encountered api timeout error before after collecting answers
+    data.to_pandas().to_csv('./benchmark_data.csv')
+
+    result = evaluate(data, metrics=[
+        answer_relevancy,
+        faithfulness,
+        ContextPrecision(batch_size=2),
+        AnswerSimilarity(batch_size=1)
+        #ContextRecall(batch_size=2) # causes timeout with openai api idk why
+    ])
+    print(result)
+    agg_score = round(100 * sum(result.values()) / len(result), 2)
+    print(agg_score)
+    result.to_pandas().to_csv('./benchmark_results.csv')
+
+    with open('./aggregate_score.txt', 'w') as file:
+        file.write(str(agg_score) + '%')
+
+    return agg_score
