@@ -46,6 +46,7 @@ def answer_question_with_docs(
     This is the user's question:
     {query}
     """
+    print(template_str)
 
     parser = PydanticOutputParser(pydantic_object=ApplicationResponse)
     prompt = PromptTemplate(
@@ -65,6 +66,7 @@ def answer_question_with_docs(
         }
     )
     response = parser.invoke(output)
+    print(response.answer)
     try:
         save_to_db(query_parts, documents_text, response.answer)
     except Exception:  #TODO: Use logger to log exception
@@ -97,7 +99,8 @@ def save_to_db(query, documents, response):
         if isinstance(value, list):
             return ','.join(str(v) for v in value)
         return str(value)
-
+    
+    print('saving to db')
     # Check if db.csv exists
     file_exists = os.path.isfile('./db.csv')
 

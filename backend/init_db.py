@@ -21,7 +21,7 @@ def batch(items, size=20):
     return batches
 
 
-def setup(relative_path=''):
+def setup(relative_path='../corpus/'):
     pinecone.init(api_key=os.getenv("PINECONE_API_KEY"), environment="gcp-starter")
 
     try:

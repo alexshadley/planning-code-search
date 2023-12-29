@@ -199,7 +199,7 @@ print(len(benchmark))
 def test_qa_pair():
     model = ChatOpenAI(model="gpt-3.5-turbo-1106")
     embeddings_model = OpenAIEmbeddings()
-    # init_db.setup(relative_path='../')
+    # init_db.setup(relative_path='../corpus/')
     pinecone.init(api_key=os.getenv("PINECONE_API_KEY"), environment="gcp-starter")
     pinecone_index = pinecone.Index("planning-code-chunks")
 
