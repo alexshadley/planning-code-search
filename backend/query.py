@@ -1,6 +1,9 @@
 from typing import List, Optional
 import openai
 from pydantic import BaseModel, Field
+import csv
+import os
+from datetime import datetime
 
 from langchain.output_parsers import PydanticOutputParser
 from langchain.prompts import PromptTemplate
@@ -24,7 +27,7 @@ class ApplicationResponse(BaseModel):
 
 
 def answer_question_with_docs(
-    model, embeddings_model, pinecone_index, query_parts: List[str]
+        model, embeddings_model, pinecone_index, query_parts: List[str]
 ):
     matches = []
     for part in query_parts:
@@ -62,6 +65,10 @@ def answer_question_with_docs(
         }
     )
     response = parser.invoke(output)
+    try:
+        save_to_db(query_parts, documents_text, response.answer)
+    except Exception:  #TODO: Use logger to log exception
+        print('Failed to save to db')
     return response
 
 
@@ -81,3 +88,30 @@ def ask_question(model, db, raw_application: Optional[str], query: str):
     response = prompt_and_model.invoke({"query": full_prompt})
 
     return response
+
+
+def save_to_db(query, documents, response):
+    """Use a local csv file to save queries, contexts, and responses. Creates csv if needed."""
+    # Convert lists to string
+    def format_value(value):
+        if isinstance(value, list):
+            return ','.join(str(v) for v in value)
+        return str(value)
+
+    # Check if db.csv exists
+    file_exists = os.path.isfile('./db.csv')
+
+    # append or write
+    with open('./db.csv', 'a', newline='', encoding='utf-8') as file:
+        writer = csv.writer(file)
+
+        # write columns if needed
+        if not file_exists:
+            writer.writerow(['timestamp', 'query', 'context', 'response'])
+
+        writer.writerow([
+            datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            format_value(query),
+            format_value(documents),
+            format_value(response)
+        ])
