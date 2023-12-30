@@ -55,17 +55,12 @@ const App = () => {
      }, 50); // Speed of typing animation
     };
 
-    const stopTypingAnimation = () => {
-        clearInterval(interval);
-        setPlaceholder(''); // Optionally clear the placeholder when focused
-    };
-
      if (!isFocused) {
        startTypingAnimation();
      }
 
      return () => clearInterval(interval);
-   }, []);
+   }, [isFocused]);
 
   const [response, setResponse] = useState<Response | null>(null);
   // const [answer, setAnswer] = useState<string | null>(null);
