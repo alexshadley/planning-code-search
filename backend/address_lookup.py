@@ -1,12 +1,15 @@
-from typing import List, TypedDict
-import pandas as pd
+import os
+from typing import List
+
+import dotenv
 import geopandas as gpd
-from shapely import wkt
+import pandas as pd
+from geocodio import GeocodioClient
+from langchain.chat_models import ChatOpenAI
 from langchain.output_parsers import PydanticOutputParser
 from langchain.prompts import PromptTemplate
 from pydantic import BaseModel, Field
-from langchain.chat_models import ChatOpenAI
-import dotenv
+from shapely import wkt, Point
 
 dotenv.load_dotenv()
 
@@ -24,12 +27,18 @@ def load_geo_from_csv(file_name, geo_col):
     return df
 
 
+def get_client():
+    return GeocodioClient(os.getenv('GEOCODIO_API_KEY'))
+
+script_dir = os.path.dirname(os.path.abspath(__file__))
+
+
 prc = pd.read_csv(
-    "./sf_parcels.csv.gz",
+    script_dir + "/../sf_parcels.csv.gz",
     usecols=["from_address_num", "to_address_num", "street_name", "shape"],
 )
 prc = to_geo(prc, "shape")
-zn = load_geo_from_csv("./sf_zoning.csv.gz", "the_geom")
+zn = load_geo_from_csv(script_dir + "/../sf_zoning.csv.gz", "the_geom")
 
 
 model = ChatOpenAI(model="gpt-3.5-turbo-1106")
@@ -74,27 +83,23 @@ def extract_addresses(query: str) -> List[Address]:
 
 
 def get_data_for_addresses(addresses: List[Address]):
-    result = []
-    for a in addresses:
-        # TODO: make chunking less janky
-        # chunksize = 10**5
-        # with pd.read_csv("sf_parcels.csv.gz", chunksize=chunksize) as reader:
-        # for prc in reader:
-        #     prc = to_geo(prc, "shape")
-        parcels = prc[
-            (prc["street_name"] == a.street)
-            & (prc["from_address_num"] <= a.number)
-            & (a.number <= prc["to_address_num"])
-        ]
-        if len(parcels) > 0:
-            zoning = gpd.sjoin(parcels, zn, how="inner", predicate="intersects")
+    geocoded_addresses = []
 
-            result.append(
-                {
-                    "address": a,
-                    "zoning_use_district": zoning["zoning"].tolist(),
-                    "zoning_use_district_name": zoning["districtname"].tolist(),
-                }
-            )
+    for addy in addresses:
+        api_results = get_client().geocode(str(addy.number) + ' ' + addy.street + ' San Francisco, CA')
+        geocoded_addresses.append(api_results.get('results')[0])
 
-    return result
+    gdf = gpd.GeoDataFrame({'Address': [a.get('formatted_address') for a in geocoded_addresses],
+                            'geometry': [Point(a.get('location')['lng'],
+                                               a.get('location')['lat']) for a in geocoded_addresses]})
+
+    if len(gdf) > 0:
+        zoning = gpd.sjoin(gdf, zn, how="inner", predicate="intersects")
+        zoning = zoning[['Address', 'zoning', 'districtname']]
+        zoning = zoning.rename(columns={'Address': 'address',
+                                        'zoning': 'zoning_use_district',
+                                        'districtname': 'zoning_use_district_name'})
+        return zoning.to_dict('records')
+
+
+    return []
