@@ -1,0 +1,266 @@
+Letter of Determination 
+
+June 16, 2021 
+
+Paul B. Albritton 
+Mackenzie & Albritton LLP 
+155 Sansome Street, Suite 800  
+San Francisco, CA  94104 
+
+Record No.: 
+Site Address:  
+Assessor’s Block/Lot: 
+Zoning District: 
+Staff Contact:  
+
+2021-003477ZAD 
+Verizon Wireless – Section 6409 of the Spectrum Act of 2012 
+N/A 
+N/A 
+Kalyani Agnihotri – 628-652-7454, kalyani.agnihotri@sfgov.org 
+
+Dear Mr.  Albritton: 
+
+This letter is in response to your request for a Letter of Determination on behalf of Verizon Wireless regarding the 
+applicability  of  Section  6409 of  the  Spectrum  Act  to  applications  under  the  Planning  Code  to  modify  existing, 
+permitted Wireless Telecommunications Services (WTS) Facilities. The request seeks confirmation of the following: 
+1)  the    Planning  Department’s  Application  process  for  all  Section  6409  requests;  2)  whether  an  entitlement 
+(Certificate of Appropriateness, Minor Permit to Alter, or Conditional Use Authorization) is required; and 3) the 
+submittal requirements for Section 6409 Applications. 
+
+The Planning Department has outlined its application process and the submittal requirements for Section 6409 
+applications below.  
+
+What is an “Eligible Facilities Request? 
+Under regulations promulgated by the Federal Communications Commission (FCC),1 an Eligible Facilities 
+Request (EFR) is a request for modification of an existing tower or base station that does not substantially change 
+the physical dimensions of such tower or base station, typically involving: 
+
+• 
+• 
+• 
+
+collocation of new transmission equipment;  
+removal of transmission equipment; or  
+replacement of transmission equipment. 
+
+Section 6409 provides that “a State or local government may not deny, and  shall approve, any eligible facilities 
+request for a modification of an existing wireless tower or base station that does not substantially change the 
+physical dimensions of such tower or base station.”2  
+
+1 See 47 C.F.R. § 1.6100(b)(3). 
+2 47 U.S.C. § 1455(a)(1). 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+  
+ 
+ 
+ 
+ 
+ 
+ 
+Paul B. Albritton 
+Mackenzie & Albritton LLP 
+155 Sansome Street, Suite 800  
+San Francisco, CA  94104 
+
+June 16, 2021 
+Letter of Determination 
+Verizon Wireless – Section 6409 of the Spectrum Act 
+
+The  Planning  Department  considers  an  existing  wireless  facility  for  purposes  of  Section  6409  as  a  Macro  WTS 
+Facility3 that is principally permitted in a Commercial zoning district or conditionally authorized in a Neighborhood 
+Commercial or Residential zoning district. A Micro WTS Facility4 is deemed as an accessory use to the principally 
+or conditionally permitted use in a zoning district and is not considered an “existing wireless tower or base station” 
+for the purposes of Section 6409.  
+
+Application and Review Process (see attached EFR Workflow) 
+
+•  A Building Permit Application (BPA) is required to approve an EFR. 
+•  The process for an EFR is ministerial in nature.  
+•  The sponsor must include the attached EFR Checklist in its BPA submittal, in addition to the materials 
+listed in the section below entitled “Application Materials required for EFR”. The proposed scope of work 
+must satisfy the requirement that the proposed modification would not consist of a substantial change to 
+the physical dimensions of the existing wireless tower or base station as the phrase is defined in the FCC 
+regulations5 and Eligibility Requirements list below. 
+The BPA must be submitted to the Department of Building Inspection as a “Form 8” permit, which is an 
+over-the-counter (OTC) alteration permit. In addition to review by the Department of Building Inspection, 
+the permit will also be reviewed by the Planning Department, Fire Department and Department of Public 
+Health. The City’s standard OTC review process will be followed to review EFR applications.  
+The Planning Department will review the BPA to verify whether it meets the Eligibility Requirements listed 
+below. If the application meets the Eligibility Requirements, Planning will approve the application as an 
+OTC approval and the application will be routed to the other City agencies for further review.  
+
+• 
+
+• 
+
+Eligibility Requirements for EFRs – Substantial Change Constraints 
+
+CRITERIA 
+Height 
+Width 
+Equipment cabinets 
+
+Excavation 
+Concealment 
+Compliance with prior permit 
+conditions 
+
+BASE STATIONS  
+10 feet or 10% of existing height 
+6 feet 
+
+TOWERS 
+20 feet or 10% of existing height 
+20 ft or tower width 
+Installation  of  more  than  the  standard  number  of  new  equipment 
+cabinets for the technology involved; 4 maximum  
+New  ground  cabinets  if  no  pre-existing  ground  cabinets  installed  OR 
+ground  cabinets  that  are  >  10%  in  height  / overall  volume  of  existing 
+ground cabinets. 
+Within leased or owned area 
+Cannot defeat existing concealment elements 
+Changes must comply with all prior conditions except limits on height, 
+width, number of equipment cabinets or excavation 
+
+Within leased or owned area 
+
+3 See San Francisco Planning Code Section 102 Definitions, Wireless Telecommunications Services (WTS) Facility, Macro 
+4 See San Francisco Planning Code Section 102 Definitions, Wireless Telecommunications Services (WTS) Facility, Micro 
+5 See 47 C.F.R. § 1.6100(b)(7). 
+
+2  
+
+ 
+ 
+  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Paul B. Albritton 
+Mackenzie & Albritton LLP 
+155 Sansome Street, Suite 800  
+San Francisco, CA  94104 
+
+June 16, 2021 
+Letter of Determination 
+Verizon Wireless – Section 6409 of the Spectrum Act 
+
+Review Timeline and Process: The City has 30 days to provide notice of incompleteness of EFR applications 
+
+•  The City has 60 days for approval or denial of EFR applications 
+•  The  sponsor  may  drop-in  to  the  City’s  Permit  Center  to  submit  an  over-the-counter  permit  with  no 
+appointment, between the hours of 9:30AM and 11:30AM, Monday through Friday. Each sponsor is limited 
+to one application per visit.  
+
+•  The sponsor must submit the BPA, EFR, and all “Application Materials required for EFR” identified below 
+
+during the drop-in visit in order to submit a complete over-the-counter permit. 
+
+•  City Departments will make best efforts to review the application materials and either approve the permit 
+or issue one or more notices of incompleteness within one business day. However, the City reserves the 
+right to utilize up to 30 days to issue a notice of incompleteness and up to 60 days to complete its review 
+of the application as allowed under FCC regulations.  
+
+•  The sponsor may resubmit additional information requested by the City at any time for further over-the-
+
+counter review. 
+
+Application Materials Required for EFR: The City requires the following documents be provided in conjunction with 
+all BPA that consist of EFRs: 
+
+•  Form 8 Alteration Permit 
+•  Two  sets  of  architectural  plans,  including  structural  plans/calculations  as  deemed  necessary  by  the 
+
+Department of Building Inspection. 
+
+•  EFR Checklist 
+•  Photo simulations 
+•  Radio frequency report 
+•  DPH radio frequency approval letter 
+•  Declaration  of  Intent  for  Section  106  Review  for  sites  in  Article  10  or  11  Landmark  and  Conservation 
+
+Districts 
+
+•  Proof that the existing site was legally installed and can be deemed an “existing wireless tower or base 
+
+station”. The following documents are acceptable as proof:  
+•  Planning Commission approval motions and plans,  
+•  Copies of approved building permit plans, and/or 
+•  Copies of Certificates of Final Completion from the Department of Building Inspection, etc. 
+
+Please  note  that  a  Letter  of  Determination  is  a  determination  regarding  the  classification  of  uses  and 
+interpretation and applicability of the provisions of the Planning Code. This Letter of Determination is not 
+a permit to commence any work or change occupancy. Permits from appropriate Departments must be 
+secured before work is started or occupancy is changed.  
+
+3  
+
+ 
+ 
+  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Paul B. Albritton 
+Mackenzie & Albritton LLP 
+155 Sansome Street, Suite 800  
+San Francisco, CA  94104 
+
+June 16, 2021 
+Letter of Determination 
+Verizon Wireless – Section 6409 of the Spectrum Act 
+
+APPEAL:  An appeal may be filed with the Board of Appeals within 15 days of the date of this letter if you believe 
+this determination represents an error in interpretation of the Planning Code or abuse in discretion by the Zoning 
+Administrator. Please contact the Board of Appeals in person at 49 South Van Ness Ave, Suite 1475, call (628) 652-
+1150, or visit www.sfgov.org/bdappeal.  
+
+Sincerely, 
+
+Scott F. Sanchez 
+Acting Zoning Administrator 
+
+cc:   
+
+Mackenzie & Albritton LLP 
+William Sanders, Deputy City Attorney  
+Rich Hillis, Director of SF Planning Department 
+Patrick O’Riordan, Interim Director, Department of Building inspection 
+Dr. Grant Colfax, Director, Department of Public Health 
+
+Attachments:  Eligible Facilities Request Workflow 
+            Eligible Facilities Request Checklist 
+
+4  
+
+ 
+ 
+  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
