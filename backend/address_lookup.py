@@ -41,7 +41,11 @@ prc = to_geo(prc, "shape")
 zn = load_geo_from_csv(script_dir + "/../sf_zoning.csv.gz", "the_geom")
 
 
-model = ChatOpenAI(model="gpt-3.5-turbo-1106")
+model = ChatOpenAI(
+    model="gpt-4-1106-preview", 
+    temperature=0,
+    max_tokens=512
+)
 
 
 class Address(BaseModel):
