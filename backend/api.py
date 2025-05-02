@@ -1,5 +1,5 @@
 import json
-import pinecone
+from pinecone import Pinecone
 from typing import Optional
 from fastapi import FastAPI, UploadFile
 from fastapi.responses import FileResponse, RedirectResponse
@@ -34,8 +34,9 @@ model = ChatOpenAI(model="gpt-4-1106-preview")
 
 embeddings_model = OpenAIEmbeddings()
 
-pinecone.init(api_key=os.getenv("PINECONE_API_KEY"), environment="gcp-starter")
-pinecone_index = pinecone.Index("planning-code-chunks")
+# Initialize Pinecone client with the new SDK pattern
+pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
+pinecone_index = pc.Index("planning-code-chunks")
 
 
 FRONTEND_PORT = os.getenv("PORT", str(3000))
