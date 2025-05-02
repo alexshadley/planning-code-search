@@ -32,11 +32,12 @@ def answer_question_with_docs(
     matches = []
     for part in query_parts:
         query_embeddings = embeddings_model.embed_query(part)
-        matches.extend(
-            pinecone_index.query(
-                vector=query_embeddings, top_k=3, include_metadata=True
-            )["matches"]
+        query_response = pinecone_index.query(
+            vector=query_embeddings, 
+            top_k=3, 
+            include_metadata=True
         )
+        matches.extend(query_response.matches)
 
     template_str = """
     These are excerpts from the SF planning code. Use them when answering the user's question:
@@ -55,7 +56,7 @@ def answer_question_with_docs(
         partial_variables={"format_instructions": parser.get_format_instructions()},
     )
 
-    documents_text = "\n\n".join(str(d["metadata"]) for d in matches)
+    documents_text = "\n\n".join(str(d.metadata) for d in matches)
     print("docs", documents_text)
 
     prompt_and_model = prompt | model
