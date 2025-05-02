@@ -22,7 +22,7 @@ const App = () => {
      const phrases = [
        'How is 387 Market zoned?',
        'Where can I build the tallest building?',
-       'How can I lose my minigolf permit?'
+       'Is retail by-right at 339 Divisadero?'
      ];
      let currentPhraseIndex = 0;
      let charIndex = -1;
@@ -119,7 +119,7 @@ const App = () => {
         <div>
           Interact with the SF Planning Code. A project by Alex Shadley, Jacob
           Marshall, and Salim Damerdji. If you have feedback email me at
-          shadleyalex@gmail.com
+          planweave.ai@gmail.com
         </div>
         <div className="query-box">
           <textarea
